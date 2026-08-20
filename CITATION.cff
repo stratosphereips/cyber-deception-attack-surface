@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it as below."
+title: "[artifact] Decoys Cannot Go Everywhere: Mapping the Deception Surface in MITRE ATT&CK"
+abstract: >-
+  A dataset assessing where passive infrastructure deception can be
+  deployed across the MITRE ATT&CK Enterprise matrix, scoring every technique
+  on four criteria (feasibility, interaction, intelligence yield, malice
+  fidelity) against a frozen rubric, with a written rationale per entry.
+type: artifact
+authors:
+  - given-names: Veronica
+    family-names: Valeros
+    email: valerver@fel.cvut.cz
+    affiliation: >-
+      Stratosphere Laboratory, AIC, FEL, Czech
+      Technical University in Prague
+    orcid: 'https://orcid.org/0000-0003-2554-3231'
