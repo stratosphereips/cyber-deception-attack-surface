@@ -11,6 +11,10 @@ Companion to the paper:
 
 **Headline finding:** 80 of 250 technique/tactic entries (~32%) are feasible deception surfaces.
 
+## Dataset in Zenodo
+
+Valeros, V. (2026). CTU-HONEYEVAL-26: Infrastructure Deception Codebook, Decision Rules, and Per-Technique Assessments for MITRE ATT&CK v18.1 (Version 1.3.0) [Dataset]. Zenodo. https://doi.org/10.5281/zenodo.22030181
+
 ## License
 
 - Evaluation data: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
