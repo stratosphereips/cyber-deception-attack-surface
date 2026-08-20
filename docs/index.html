@@ -773,7 +773,7 @@
 <header class="site-header">
   <div class="header-top">
     <div class="header-brand">
-      <span class="brand-eyebrow">Sweep or Seek &middot; Mapping Deception Viability Across MITRE ATT&amp;CK&reg;</span>
+      <span class="brand-eyebrow">Sweep or Seek &middot; Mapping Deception Feasibility Across MITRE ATT&amp;CK&reg;</span>
       <span class="brand-title">Cyber Deception Attack Surface Mapping</span>
       <span class="brand-sub">250 ATT&amp;CK v18.1 techniques scored for infrastructure deception feasibility &middot; 80 feasible (32%)</span>
     </div>
@@ -815,7 +815,7 @@
 </header>
 
 <div class="matrix-scroll">
-  <div class="matrix-grid" id="matrixGrid" role="grid" aria-label="Deception viability matrix"></div>
+  <div class="matrix-grid" id="matrixGrid" role="grid" aria-label="Deception feasibility matrix"></div>
   <div class="no-results" id="noResults">No techniques match this filter.</div>
 </div>
 
@@ -944,13 +944,13 @@ function buildGrid() {
     const barM = m > 0 ? `<div class="tbar-m" style="flex:${m}"></div>` : "";
     const barL = l > 0 ? `<div class="tbar-l" style="flex:${l}"></div>` : "";
 
-    const viable = h + m;
+    const feasible = h + m;
     const tacId = (items[0] || {}).tac_id || "";
     const tacUrl = `https://attack.mitre.org/tactics/${tacId}/`;
     col.innerHTML = `<div class="tac-header">
       <a class="tac-abbr attck-link" href="${tacUrl}" target="_blank" rel="noopener" title="View ${tac} on ATT&amp;CK">${tacId}</a>
       <div class="tac-name"><a class="attck-link attck-link-name" href="${tacUrl}" target="_blank" rel="noopener">${tac}</a></div>
-      <div class="tac-count"><span class="tac-count-text">${total}&nbsp;techniques&nbsp;&middot;&nbsp;${viable}&nbsp;feasible</span></div>
+      <div class="tac-count"><span class="tac-count-text">${total}&nbsp;techniques&nbsp;&middot;&nbsp;${feasible}&nbsp;feasible</span></div>
       <div class="tac-bar">${barH}${barM}${barL}</div>
       <button class="tac-toggle" type="button" aria-expanded="true" aria-label="Collapse ${tac}"><span class="tac-chevron" aria-hidden="true"></span></button>
     </div>
