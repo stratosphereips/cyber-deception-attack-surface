@@ -1,5 +1,5 @@
-<title>Cyber Deception Opportunity Matrix</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber Deception Attack Surface Mapping</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500&display=swap');
 
@@ -603,6 +603,24 @@
   }
   .footer-right { margin-left: auto; text-align: right; }
 
+  /* Citation gets its own full-width row above the metadata line */
+  .footer-cite {
+    flex: 0 0 100%;
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cite-label {
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 9px;
+    margin-right: 8px;
+  }
+
   /* THEME TOGGLE */
   .theme-toggle {
     font-family: var(--display);
@@ -627,9 +645,128 @@
   .detail-panel::-webkit-scrollbar-track { background: var(--surface); }
   .detail-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+  /* Cells moved inside this wrapper for collapsing; it must reproduce the
+     column layout they used to inherit from .tac-column. */
+  .tac-cells {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .col-hidden { display: none; }
+
+  /* The collapse toggle is a phone affordance; desktop columns are always open. */
+  .tac-toggle { display: none; }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 720px) {
+    /* Header: reclaim vertical space, let the sticky bar keep the page usable */
+    .site-header { padding: 14px 16px 12px; }
+    .header-top { gap: 12px; }
+    .brand-eyebrow { font-size: 8px; letter-spacing: 0.12em; }
+    .brand-title { font-size: 17px; }
+    .brand-sub { font-size: 11px; }
+
+    /* Stats: full-width row of four, no longer competing with the title for space */
+    .site-header .header-top > div:last-child {
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-stats { flex: 1; }
+    .stat-block { flex: 1; padding: 6px 4px; }
+    .stat-val { font-size: 17px; }
+    .stat-label { font-size: 7px; letter-spacing: 0.08em; }
+
+    /* Controls: search gets its own full-width row instead of being squeezed */
+    .controls { margin-top: 10px; gap: 5px; }
+    .controls-divider { display: none; }
+    .filter-label { width: 100%; margin-bottom: 2px; }
+    .filter-btn { flex: 1 0 auto; }
+    .search-wrap { margin-left: 0; width: 100%; margin-top: 4px; }
+    .search-input { width: 100%; font-size: 16px; padding: 7px 10px 7px 28px; }
+
+    /* Matrix: the 2080px canvas is unreadable on a phone. Stack tactics
+       vertically as full-width sections and scroll the page instead. */
+    .matrix-scroll { overflow-x: visible; padding: 14px 16px 40px; }
+    .matrix-grid {
+      grid-template-columns: 1fr;
+      min-width: 0;
+      gap: 18px;
+    }
+    .tac-header { position: sticky; top: 0; z-index: 10; }
+    .tech-cell { padding: 9px 10px; }
+    .tech-cell.u-High, .tech-cell.u-Medium { padding-left: 9px; }
+
+    /* Collapsible tactics: 14 sections x ~18 cells is an unbrowsable scroll,
+       so sections start closed and the page opens as a 14-item index. */
+    .tac-header {
+      position: relative;
+      padding-right: 44px;
+      cursor: pointer;
+      margin-bottom: 0;
+    }
+    .tac-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0; right: 0;
+      width: 44px;
+      height: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--tac-text);
+    }
+    .tac-chevron {
+      width: 9px; height: 9px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+      transition: transform 0.15s ease;
+      margin-top: -4px;
+    }
+    .tac-column.collapsed .tac-chevron { transform: rotate(-45deg); margin-top: 4px; }
+
+    .tac-cells { padding-top: 4px; }
+    .tac-column.collapsed .tac-cells { display: none; }
+    .tac-column.collapsed .tac-bar { margin-bottom: 2px; }
+
+    /* Closed sections sit flush so the list reads as an index */
+    .matrix-grid { gap: 8px; }
+
+    /* Panel: 440px is wider than the viewport, which clipped the content.
+       Make it a full-width sheet. */
+    :root { --panel-w: 100%; }
+    .detail-panel { width: 100%; border-left: none; }
+    .panel-head { padding-right: 64px; }
+    .panel-body { padding: 16px 18px 32px; }
+    .score-grid { grid-template-columns: 1fr; }
+    .asset-cols { grid-template-columns: 1fr; gap: 14px; }
+
+    /* Footer: stop the right column from being pushed off the edge */
+    .site-footer { padding: 16px; gap: 10px; }
+    .footer-cite { font-size: 10px; padding-bottom: 10px; }
+    .cite-label { display: block; margin-bottom: 3px; }
+    .footer-right { margin-left: 0; text-align: left; }
+  }
+
+  .close-x { display: none; }
+
+  /* Tap targets: coarse pointers need a real touch area, not a 20px button */
+  @media (pointer: coarse) {
+    .filter-btn, .theme-toggle { min-height: 34px; }
+    .panel-close { min-width: 44px; min-height: 34px; }
+    .close-esc { display: none; }
+    .close-x { display: inline; font-size: 18px; line-height: 1; }
+    .tech-cell { min-height: 44px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .detail-panel { transition: none; }
     .tech-cell { transition: none; }
+    .tac-chevron { transition: none; }
   }
 </style>
 
@@ -637,8 +774,8 @@
   <div class="header-top">
     <div class="header-brand">
       <span class="brand-eyebrow">Sweep or Seek &middot; Mapping Deception Viability Across MITRE ATT&amp;CK&reg;</span>
-      <span class="brand-title">Cyber Deception Opportunity Matrix</span>
-      <span class="brand-sub">250 ATT&amp;CK v18.1 techniques scored for infrastructure deception viability &middot; 80 feasible (32%)</span>
+      <span class="brand-title">Cyber Deception Attack Surface Mapping</span>
+      <span class="brand-sub">250 ATT&amp;CK v18.1 techniques scored for infrastructure deception feasibility &middot; 80 feasible (32%)</span>
     </div>
     <div style="display:flex;align-items:flex-start;gap:10px;flex-shrink:0;">
       <div class="header-stats">
@@ -686,7 +823,7 @@
 
 <aside class="detail-panel" id="detailPanel" role="dialog" aria-modal="true" aria-label="Technique detail" tabindex="-1">
   <div class="panel-head">
-    <button class="panel-close" onclick="closePanel()" aria-label="Close">ESC</button>
+    <button class="panel-close" onclick="closePanel()" aria-label="Close"><span class="close-esc">ESC</span><span class="close-x" aria-hidden="true">&times;</span></button>
     <div class="panel-tac" id="pTac"></div>
     <div class="panel-id" id="pId"></div>
     <div class="panel-name" id="pName"></div>
@@ -714,6 +851,11 @@
 </aside>
 
 <footer class="site-footer">
+  <div class="footer-cite">
+    <span class="cite-label">Companion to</span>
+    Valeros, V., Catania, C., Lis&yacute;, V., Griffioen, H. (2026).
+    &ldquo;Decoys Cannot Go Everywhere: Mapping the Deception Surface in MITRE ATT&amp;CK&rdquo;.
+  </div>
   <span>Data: CC BY 4.0 &middot; Code: MIT</span>
   <span>Veronica Valeros &middot; Czech Technical University in Prague &middot; 2026</span>
   <span class="footer-right">
@@ -780,6 +922,9 @@ function scoreClass(v) {
   return "";
 }
 
+const MOBILE_Q = window.matchMedia("(max-width: 720px)");
+function isMobile() { return MOBILE_Q.matches; }
+
 function buildGrid() {
   const grid = document.getElementById("matrixGrid");
   for (const tac of TACTIC_ORDER) {
@@ -792,6 +937,7 @@ function buildGrid() {
 
     const col = document.createElement("div");
     col.className = "tac-column";
+    col.dataset.tacName = tac;
 
     // Build proportional bar
     const barH = h > 0 ? `<div class="tbar-h" style="flex:${h}"></div>` : "";
@@ -804,9 +950,17 @@ function buildGrid() {
     col.innerHTML = `<div class="tac-header">
       <a class="tac-abbr attck-link" href="${tacUrl}" target="_blank" rel="noopener" title="View ${tac} on ATT&amp;CK">${tacId}</a>
       <div class="tac-name"><a class="attck-link attck-link-name" href="${tacUrl}" target="_blank" rel="noopener">${tac}</a></div>
-      <div class="tac-count">${total}&nbsp;techniques&nbsp;&middot;&nbsp;${viable}&nbsp;feasible</div>
+      <div class="tac-count"><span class="tac-count-text">${total}&nbsp;techniques&nbsp;&middot;&nbsp;${viable}&nbsp;feasible</span></div>
       <div class="tac-bar">${barH}${barM}${barL}</div>
-    </div>`;
+      <button class="tac-toggle" type="button" aria-expanded="true" aria-label="Collapse ${tac}"><span class="tac-chevron" aria-hidden="true"></span></button>
+    </div>
+    <div class="tac-cells"></div>`;
+    const cellWrap = col.querySelector(".tac-cells");
+    col.querySelector(".tac-header").addEventListener("click", e => {
+      if (e.target.closest("a")) return;   // let ATT&CK links through
+      if (!isMobile()) return;             // desktop columns stay open
+      toggleTactic(col);
+    });
 
     for (const t of items) {
       const cell = document.createElement("div");
@@ -829,7 +983,7 @@ function buildGrid() {
       cell.addEventListener("keydown", e => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPanel(t, cell); }
       });
-      col.appendChild(cell);
+      cellWrap.appendChild(cell);
     }
     grid.appendChild(col);
   }
@@ -914,22 +1068,53 @@ function onSearch(val) {
   applyFilter();
 }
 
+// Collapsing is a mobile affordance: 14 stacked tactics is an unbrowsable
+// scroll on a phone. Desktop keeps every column open (the toggle is hidden).
+function toggleTactic(col, force) {
+  const collapsed = force !== undefined ? force : !col.classList.contains("collapsed");
+  col.classList.toggle("collapsed", collapsed);
+  const btn = col.querySelector(".tac-toggle");
+  btn.setAttribute("aria-expanded", String(!collapsed));
+  btn.setAttribute("aria-label", (collapsed ? "Expand " : "Collapse ") + col.dataset.tacName);
+}
+
 function applyFilter() {
   let visible = 0;
-  document.querySelectorAll(".tech-cell").forEach(cell => {
-    const mf = currentFilter === "all" || cell.dataset.u === currentFilter;
-    const mh = !hideNotFeasible || cell.dataset.u !== "Low";
-    const ms = !currentSearch ||
-      cell.dataset.name.includes(currentSearch) ||
-      cell.dataset.id.includes(currentSearch) ||
-      cell.dataset.tac.includes(currentSearch);
-    if (mf && mh && ms) {
-      cell.classList.remove("cell-hidden");
-      visible++;
-    } else {
-      cell.classList.add("cell-hidden");
+  const filtering = currentSearch || currentFilter !== "all" || hideNotFeasible;
+
+  document.querySelectorAll(".tac-column").forEach(col => {
+    let shown = 0;
+    col.querySelectorAll(".tech-cell").forEach(cell => {
+      const mf = currentFilter === "all" || cell.dataset.u === currentFilter;
+      const mh = !hideNotFeasible || cell.dataset.u !== "Low";
+      const ms = !currentSearch ||
+        cell.dataset.name.includes(currentSearch) ||
+        cell.dataset.id.includes(currentSearch) ||
+        cell.dataset.tac.includes(currentSearch);
+      if (mf && mh && ms) {
+        cell.classList.remove("cell-hidden");
+        shown++;
+      } else {
+        cell.classList.add("cell-hidden");
+      }
+    });
+    visible += shown;
+
+    // A tactic with no matches is noise; drop it entirely.
+    col.classList.toggle("col-hidden", shown === 0);
+
+    // Matches must never stay buried in a collapsed section.
+    if (filtering && shown > 0) toggleTactic(col, false);
+
+    const cnt = col.querySelector(".tac-count-text");
+    if (cnt) {
+      if (!cnt.dataset.full) cnt.dataset.full = cnt.innerHTML;
+      cnt.innerHTML = filtering
+        ? shown + "&nbsp;of&nbsp;" + col.querySelectorAll(".tech-cell").length + "&nbsp;shown"
+        : cnt.dataset.full;
     }
   });
+
   document.getElementById("noResults").style.display = visible === 0 ? "block" : "none";
 }
 
@@ -967,4 +1152,12 @@ function toggleTheme() {
 })();
 
 buildGrid();
+
+// Phones open to a 14-item index of tactic headers rather than a 250-cell scroll.
+function syncCollapse() {
+  const mobile = isMobile();
+  document.querySelectorAll(".tac-column").forEach(col => toggleTactic(col, mobile));
+}
+syncCollapse();
+MOBILE_Q.addEventListener("change", syncCollapse);
 </script>
