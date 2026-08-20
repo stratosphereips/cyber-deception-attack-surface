@@ -1,7 +1,7 @@
-# CTU-HONEYEVAL-26
+# Cyber Deception Attack Surface Mapping Across the MITRE ATT&CK® Enterprise matrix (v18.1)
 
 An interactive matrix of where **passive infrastructure deception** can be
-deployed across the MITRE ATT&CK® Enterprise matrix (v18.1) — every technique
+deployed across the MITRE ATT&CK® Enterprise matrix (v18.1). Every technique
 scored on Feasibility, Interaction, Intelligence Yield, and Malice Fidelity,
 with a written rationale per entry.
 
