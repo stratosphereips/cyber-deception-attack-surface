@@ -13,7 +13,7 @@ Companion to the paper:
 
 ## Dataset in Zenodo
 
-Valeros, V. (2026). CTU-HONEYEVAL-26: Infrastructure Deception Codebook, Decision Rules, and Per-Technique Assessments for MITRE ATT&CK v18.1 (Version 1.3.0) [Dataset]. Zenodo. https://doi.org/10.5281/zenodo.22030181
+Valeros, V. (2026). CTU-HONEYEVAL-26: Infrastructure Deception Codebook, Decision Rules, and Per-Technique Assessments for MITRE ATT&CK v18.1 [Dataset]. Zenodo. https://doi.org/10.5281/zenodo.22029527
 
 ## License
 
