@@ -215,6 +215,36 @@
     margin: 0 2px;
   }
 
+  .asset-tag.matched {
+    outline: 1px solid var(--teal);
+    outline-offset: 1px;
+    font-weight: 600;
+  }
+
+  .decoy-wrap { position: relative; }
+  .decoy-select {
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text-dim);
+    padding: 4px 22px 4px 8px;
+    max-width: 190px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position: calc(100% - 12px) 52%, calc(100% - 8px) 52%;
+    background-size: 4px 4px, 4px 4px;
+    background-repeat: no-repeat;
+    transition: border-color 0.12s, color 0.12s;
+  }
+  .decoy-select:hover { border-color: var(--text-dim); }
+  .decoy-select:focus { border-color: var(--accent); }
+  /* An active select is easy to overlook, so mark it like a live filter */
+  .decoy-select.active { border-color: var(--teal); color: var(--teal); background-color: var(--teal-dim); }
+
   .search-wrap {
     margin-left: auto;
     position: relative;
@@ -653,7 +683,21 @@
     gap: 4px;
   }
 
-  .col-hidden { display: none; }
+  /* Empty tactics stay visible but recede, so the matrix keeps its 14-column
+     shape and "no coverage here" reads as a result rather than a gap. */
+  .col-empty { opacity: 0.4; }
+  .col-empty .tac-bar { visibility: hidden; }
+  .col-empty .tac-cells::after {
+    content: "No matching techniques";
+    display: block;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 14px 6px;
+    border: 1px dashed var(--border);
+    border-radius: 3px;
+  }
 
   /* The collapse toggle is a phone affordance; desktop columns are always open. */
   .tac-toggle { display: none; }
@@ -684,6 +728,8 @@
     .filter-label { width: 100%; margin-bottom: 2px; }
     .filter-btn { flex: 1 0 auto; }
     .search-wrap { margin-left: 0; width: 100%; margin-top: 4px; }
+    .decoy-wrap { width: 100%; margin-top: 4px; }
+    .decoy-select { max-width: none; width: 100%; font-size: 16px; padding: 7px 24px 7px 10px; }
     .search-input { width: 100%; font-size: 16px; padding: 7px 10px 7px 28px; }
 
     /* Matrix: the 2080px canvas is unreadable on a phone. Stack tactics
@@ -807,6 +853,11 @@
     <button class="filter-btn" onclick="setFilter('Low',this)">Not feasible</button>
     <div class="controls-divider"></div>
     <button class="filter-btn" id="hideNotFeasibleBtn" onclick="toggleHideNotFeasible(this)">Hide not feasible</button>
+    <div class="decoy-wrap">
+      <select class="decoy-select" id="decoySelect" aria-label="Filter by decoy asset" onchange="setDecoy(this.value)">
+        <option value="all">All decoy assets</option>
+      </select>
+    </div>
     <div class="search-wrap">
       <span class="search-icon">&#x2315;</span>
       <input type="search" class="search-input" id="searchInput" placeholder="Search technique or tactic&hellip;" aria-label="Search techniques" oninput="onSearch(this.value)">
@@ -922,6 +973,49 @@ function scoreClass(v) {
   return "";
 }
 
+// Decoy-asset filter: inverts the dataset to answer "I can deploy this decoy,
+// which techniques does it cover?" Grouping is UI-only; matrix.json is the
+// canonical taxonomy and is never rewritten here. Edit DECOY_GROUPS to change
+// which labels fold together.
+const DECOY_GROUPS = {
+  "Honey Account":        ["Honey Account (mailbox)", "Honey Mailbox", "Honey Persona"],
+  "Honey Credential":     ["Honey Secret", "Honey Token", "Honey Credential Store", "Honey Certificate"],
+  "Honey Repository":     ["Honey Code Repository"],
+  "Honey Container":      ["Honey Container Image", "Honey Container Runtime"],
+  "Honey Web Property":   ["Honey Web Application"],
+  "Honey Cloud Instance": ["Honey VM"],
+};
+const DECOY_ALIAS = {};
+for (const [canon, variants] of Object.entries(DECOY_GROUPS)) {
+  for (const v of variants) DECOY_ALIAS[v] = canon;
+}
+const canonDecoy = a => DECOY_ALIAS[a] || a;
+
+function buildDecoyFilter() {
+  const counts = new Map();
+  for (const t of MATRIX_DATA) {
+    // Distinct per technique: folding variants can otherwise double-count one row.
+    for (const a of new Set((t.da || []).map(canonDecoy))) {
+      counts.set(a, (counts.get(a) || 0) + 1);
+    }
+  }
+  const sel = document.getElementById("decoySelect");
+  [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .forEach(([asset, n]) => {
+      const o = document.createElement("option");
+      o.value = asset;
+      o.textContent = `${asset} (${n})`;
+      sel.appendChild(o);
+    });
+}
+
+function setDecoy(val) {
+  currentDecoy = val;
+  document.getElementById("decoySelect").classList.toggle("active", val !== "all");
+  applyFilter();
+}
+
 const MOBILE_Q = window.matchMedia("(max-width: 720px)");
 function isMobile() { return MOBILE_Q.matches; }
 
@@ -974,6 +1068,7 @@ function buildGrid() {
       cell.dataset.name = t.name.toLowerCase();
       cell.dataset.tac = t.tac.toLowerCase();
       cell.dataset.id = t.id.toLowerCase();
+      cell.dataset.decoys = [...new Set((t.da || []).map(canonDecoy))].join("|");
 
       cell.innerHTML = `<div class="cell-id">${t.id}</div>
         <div class="cell-name">${t.name}</div>
@@ -1024,7 +1119,7 @@ function openPanel(t, cell) {
       </div>
       <div>
         <div class="asset-group-label">Decoy assets</div>
-        <div class="asset-list">${t.da.map(a => `<span class="asset-tag decoy">${a}</span>`).join("") || '<span class="asset-tag">—</span>'}</div>
+        <div class="asset-list">${t.da.map(a => `<span class="asset-tag decoy${currentDecoy !== "all" && canonDecoy(a) === currentDecoy ? " matched" : ""}">${a}</span>`).join("") || '<span class="asset-tag">—</span>'}</div>
       </div>`;
   } else {
     wrap.style.display = "none";
@@ -1049,6 +1144,8 @@ function closePanel() {
     selectedCell = null;
   }
 }
+
+let currentDecoy = "all";
 
 function setFilter(f, btn) {
   currentFilter = f;
@@ -1080,7 +1177,7 @@ function toggleTactic(col, force) {
 
 function applyFilter() {
   let visible = 0;
-  const filtering = currentSearch || currentFilter !== "all" || hideNotFeasible;
+  const filtering = currentSearch || currentFilter !== "all" || hideNotFeasible || currentDecoy !== "all";
 
   document.querySelectorAll(".tac-column").forEach(col => {
     let shown = 0;
@@ -1091,7 +1188,9 @@ function applyFilter() {
         cell.dataset.name.includes(currentSearch) ||
         cell.dataset.id.includes(currentSearch) ||
         cell.dataset.tac.includes(currentSearch);
-      if (mf && mh && ms) {
+      const md = currentDecoy === "all" ||
+        (cell.dataset.decoys && cell.dataset.decoys.split("|").includes(currentDecoy));
+      if (mf && mh && ms && md) {
         cell.classList.remove("cell-hidden");
         shown++;
       } else {
@@ -1100,18 +1199,24 @@ function applyFilter() {
     });
     visible += shown;
 
-    // A tactic with no matches is noise; drop it entirely.
-    col.classList.toggle("col-hidden", shown === 0);
+    // All 14 tactics stay on screen: an empty tactic is itself a finding
+    // (no deception coverage there), not something to hide.
+    col.classList.toggle("col-empty", shown === 0);
 
-    // Matches must never stay buried in a collapsed section.
-    if (filtering && shown > 0) toggleTactic(col, false);
+    // Matches must never stay buried in a collapsed section, and an empty
+    // tactic must show its "no matches" note instead of a misleading
+    // collapsed header.
+    if (filtering) toggleTactic(col, false);
 
     const cnt = col.querySelector(".tac-count-text");
     if (cnt) {
       if (!cnt.dataset.full) cnt.dataset.full = cnt.innerHTML;
-      cnt.innerHTML = filtering
-        ? shown + "&nbsp;of&nbsp;" + col.querySelectorAll(".tech-cell").length + "&nbsp;shown"
-        : cnt.dataset.full;
+      const totalCells = col.querySelectorAll(".tech-cell").length;
+      cnt.innerHTML = !filtering
+        ? cnt.dataset.full
+        : shown === 0
+          ? "no&nbsp;matches"
+          : shown + "&nbsp;of&nbsp;" + totalCells + "&nbsp;shown";
     }
   });
 
@@ -1152,6 +1257,7 @@ function toggleTheme() {
 })();
 
 buildGrid();
+buildDecoyFilter();
 
 // Phones open to a 14-item index of tactic headers rather than a 250-cell scroll.
 function syncCollapse() {
