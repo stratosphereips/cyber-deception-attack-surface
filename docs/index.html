@@ -274,6 +274,20 @@
     font-family: var(--mono);
   }
 
+  /* VIEW TABS */
+  .view-tabs { display: flex; gap: 2px; margin-top: 14px; border-bottom: 1px solid var(--border); }
+  .view-tab {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: none; border: none; border-bottom: 2px solid transparent;
+    color: var(--text-muted); padding: 7px 12px; cursor: pointer; transition: color 0.12s, border-color 0.12s;
+  }
+  .view-tab:hover { color: var(--text); }
+  .view-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  body.view-abstract .controls { display: none; }
+  body.view-abstract .matrix-scroll { display: none; }
+  .abstract-view { display: none; }
+  body.view-abstract .abstract-view { display: block; }
+
   /* MATRIX */
   .matrix-scroll {
     overflow-x: auto;
@@ -400,6 +414,131 @@
   .sbar:nth-child(4) { height: 9px; }
   .sbar.sh { background: var(--accent); }
   .sbar.sm { background: var(--teal); }
+
+  /* VISUAL ABSTRACT */
+  .abs-wrap { max-width: 1560px; margin: 0 auto; padding: 22px 28px 52px; }
+  .abs-hero { margin-bottom: 16px; display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); gap: 10px 40px; align-items: end; }
+  .abs-hero > .abs-eyebrow, .abs-hero > .abs-title, .abs-hero > .abs-subtitle { grid-column: 1; }
+  @media (max-width: 900px) { .abs-hero { grid-template-columns: 1fr; align-items: start; } }
+  .abs-eyebrow { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+  .abs-title { font-family: var(--display); font-size: 42px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.03; margin: 7px 0 2px; }
+  .abs-subtitle { font-family: var(--display); font-size: 19px; font-weight: 500; color: var(--text-dim); }
+  .abs-authors { font-size: 12px; color: var(--text-muted); margin-top: 9px; grid-column: 1; }
+  .abs-affil { display: block; margin-top: 2px; }
+  .abs-lede { font-size: 13.5px; color: var(--text-dim); line-height: 1.6; grid-column: 2; grid-row: 2 / span 3; align-self: end; margin: 0; }
+  @media (max-width: 900px) { .abs-lede { grid-column: 1; grid-row: auto; margin-top: 10px; } }
+  .abs-lede strong { color: var(--text); font-weight: 600; }
+
+  .abs-grid { display: grid; grid-template-columns: minmax(0,2.35fr) minmax(0,1fr); gap: 14px; align-items: stretch; }
+  .abs-side { display: flex; flex-direction: column; gap: 14px; height: 100%; }
+  /* The waffle card and the side stack must end on the same line. */
+  .abs-grid > .abs-card, .abs-side > .abs-card { height: 100%; display: flex; flex-direction: column; }
+  .abs-side > .abs-card { height: auto; }
+  .abs-side > .abs-card:last-child { flex: 1 1 auto; }
+  .abs-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 18px 20px; }
+  /* Push the legend to the foot of the waffle card so it meets the card edge. */
+  .abs-surface .abs-legend { margin-top: auto; padding-top: 14px; }
+  .abs-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .abs-card-title { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text); display: block; }
+  .abs-card-note { font-family: var(--mono); font-size: 10px; color: var(--text-muted); }
+  .abs-note { font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-top: 12px; }
+  .abs-note strong { color: var(--text); }
+
+  /* Waffle: one square per technique, one column per tactic */
+  /* Tactics range from 8 to 47 techniques. A 4-wide grid with a fixed 12-row
+     box fits the largest (47). Every column gets the same height and starts at
+     the top, so the squares share a top edge and the ratio labels line up. */
+  .waffle { display: flex; gap: 8px; margin-top: 16px; overflow-x: auto; padding-bottom: 4px; align-items: stretch; }
+  .wf-col { flex: 1 1 0; min-width: 62px; display: flex; flex-direction: column; }
+  .wf-head { background: var(--tac-bg); color: var(--tac-text); border-radius: 3px; padding: 7px 3px; text-align: center;
+             font-family: var(--mono); font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase;
+             display: flex; align-items: center; justify-content: center; line-height: 1.25; min-height: 34px; }
+  /* Cells start at the top of a fixed-height box so every column aligns. */
+  .wf-cells {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 15px;
+    gap: 3px;
+    margin-top: 8px;
+    height: 213px;
+    align-content: start;
+  }
+  .wf-c { border-radius: 2px; background: var(--low); min-height: 0; }
+  .wf-c.pad { background: none; }
+  .wf-c.h { background: var(--accent); }
+  .wf-c.m { background: var(--teal); }
+  .wf-ratio { font-family: var(--mono); font-size: 10.5px; text-align: center; margin-top: 9px; color: var(--text); }
+  .wf-ratio.zero { color: var(--text-muted); opacity: 0.55; }
+
+  .abs-legend { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; margin-top: 14px;
+                font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+  .lg { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .sw-h { background: var(--accent); } .sw-m { background: var(--teal); } .sw-l { background: var(--low); }
+  .lg-note { color: var(--text-muted); }
+
+  .crit-list { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .crit-list li { display: flex; gap: 11px; align-items: flex-start; }
+  .crit-n { font-family: var(--mono); font-size: 9px; color: var(--accent); background: var(--accent-dim); border-radius: 2px; padding: 3px 5px; }
+  .crit-list b { display: block; font-size: 13px; font-weight: 600; }
+  .crit-list span:not(.crit-n) { display: block; font-size: 11.5px; color: var(--text-dim); line-height: 1.5; margin-top: 2px; }
+  .crit-rule { margin-top: 14px; padding-top: 11px; border-top: 1px solid var(--border);
+               font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+  .crit-rule b { color: var(--accent); }
+
+  .why { font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-top: 13px; }
+  .why b { color: var(--text); font-weight: 600; }
+  .why-tag { display: block; margin-top: 5px; font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+
+  .abs-patterns { margin-top: 16px; }
+  .pat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 16px; }
+  .pat + .pat { border-left: 1px solid var(--border); padding-left: 22px; }
+  .pat h3 { font-family: var(--display); font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+  .pat-body { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .pat-svg { width: 200px; flex: 0 0 auto; color: var(--text-dim); }
+  .pat-cells rect { fill: var(--low); }
+  .pat-ghost rect { fill: none; stroke: var(--border); stroke-dasharray: 2 2; }
+  .pat-decoy { fill: var(--accent) !important; }
+  .pat-sought { stroke: var(--accent); stroke-dasharray: 2 2; }
+  .pat-label { font-family: var(--mono); font-size: 7px; fill: var(--text-muted); }
+  .pat-text { flex: 1 1 150px; }
+  .pat-text p { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+  .pat-tags { font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-top: 8px; line-height: 1.6; }
+  .pat-rule {
+    margin-top: 18px; background: var(--tac-bg); color: var(--tac-text);
+    border-radius: 3px; padding: 14px 18px;
+    font-size: 13.5px; line-height: 1.65;
+    display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; align-items: baseline;
+  }
+  .pat-rule > span {
+    font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); white-space: nowrap;
+  }
+  .pat-rule b { font-weight: 700; color: #fff; }
+  :root.light .pat-rule b { color: var(--tac-text); }
+  @media (max-width: 620px) { .pat-rule { grid-template-columns: 1fr; } }
+
+  .abs-foot { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .take { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 9px; }
+  .take li { font-size: 12px; color: var(--text-dim); line-height: 1.6; padding-left: 14px; position: relative; }
+  .take li::before { content: ""; position: absolute; left: 0; top: 6px; width: 6px; height: 6px; border-radius: 2px; background: var(--accent); }
+  .take b { color: var(--text); font-weight: 600; }
+  .abs-links { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; font-family: var(--mono); font-size: 10px; }
+  .abs-links a { color: var(--text-dim); text-decoration: none; }
+  .abs-links a:hover { color: var(--accent); text-decoration: underline; }
+
+  @media (max-width: 900px) {
+    .abs-grid, .pat-grid, .abs-foot { grid-template-columns: 1fr; }
+    .pat + .pat { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 18px; }
+  }
+  @media (max-width: 720px) {
+    .abs-wrap { padding: 16px 16px 40px; }
+    .abs-title { font-size: 28px; }
+    .abs-subtitle { font-size: 15px; }
+    .waffle { gap: 5px; }
+    .wf-col { min-width: 54px; }
+    .wf-cells { height: 166px; gap: 2px; grid-auto-rows: 12px; }
+  }
 
   /* PANEL */
   .panel-overlay {
@@ -845,6 +984,10 @@
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle light/dark theme">&#9788; Light</button>
     </div>
   </div>
+  <nav class="view-tabs" role="tablist" aria-label="View">
+    <button class="view-tab active" id="tabMatrix" role="tab" aria-selected="true" aria-controls="viewMatrix" onclick="setView('matrix')">Matrix</button>
+    <button class="view-tab" id="tabAbstract" role="tab" aria-selected="false" aria-controls="viewAbstract" onclick="setView('abstract')">Visual Abstract</button>
+  </nav>
   <div class="controls">
     <span class="filter-label">Feasibility</span>
     <button class="filter-btn f-all" onclick="setFilter('all',this)">All</button>
@@ -869,6 +1012,121 @@
   <div class="matrix-grid" id="matrixGrid" role="grid" aria-label="Deception feasibility matrix"></div>
   <div class="no-results" id="noResults">No techniques match this filter.</div>
 </div>
+
+<section class="abstract-view" id="viewAbstract" role="tabpanel" aria-labelledby="tabAbstract">
+  <div class="abs-wrap">
+
+    <div class="abs-hero">
+      <div class="abs-eyebrow">Stratosphere Laboratory &middot; Visual Abstract &middot; MITRE ATT&amp;CK v18.1</div>
+      <h1 class="abs-title">Decoys Cannot Go Everywhere</h1>
+      <div class="abs-subtitle">Mapping the Deception Surface in MITRE ATT&amp;CK</div>
+      <div class="abs-authors">Veronica Valeros &middot; Carlos Catania &middot; Viliam Lis&yacute; &middot; Harm Griffioen<span class="abs-affil">CTU in Prague &middot; Universidad Nacional de Cuyo &middot; TU Delft</span></div>
+      <p class="abs-lede">Cyber deception research commonly assumes <strong>a decoy can be placed wherever there is attacker behavior</strong>. We test that assumption with a four-criterion codebook applied to all 250 ATT&amp;CK v18.1 techniques.</p>
+    </div>
+
+    <div class="abs-grid">
+      <div class="abs-card abs-surface">
+        <div class="abs-card-head">
+          <span class="abs-card-title">The deception surface is sparse</span>
+          <span class="abs-card-note" id="absHeadline"></span>
+        </div>
+        <div class="waffle" id="waffle"></div>
+        <p class="abs-note">One square per technique, one column per tactic. For the other <strong>170 techniques</strong> there is no defender-controlled asset in the attacker&rsquo;s path that can be fabricated as a decoy.</p>
+        <div class="abs-legend">
+          <span class="lg"><i class="sw sw-h"></i>High feasibility</span>
+          <span class="lg"><i class="sw sw-m"></i>Medium</span>
+          <span class="lg"><i class="sw sw-l"></i>Not feasible</span>
+          <span class="lg lg-note" id="absZero"></span>
+        </div>
+      </div>
+
+      <div class="abs-side">
+        <div class="abs-card">
+          <div class="abs-card-title">Scored with four criteria, in order</div>
+          <ol class="crit-list">
+            <li><span class="crit-n">01</span><div><b>Feasibility</b><span>Is there a defender-controllable asset that can be mimicked as a decoy?</span></div></li>
+            <li><span class="crit-n">02</span><div><b>Interaction</b><span>Would executing the technique lead the attacker to touch it?</span></div></li>
+            <li><span class="crit-n">03</span><div><b>Intelligence yield</b><span>What would that interaction reveal to the defender?</span></div></li>
+            <li><span class="crit-n">04</span><div><b>Malice fidelity</b><span>Does a hit reliably indicate malice rather than benign activity?</span></div></li>
+          </ol>
+          <div class="crit-rule">First <b>No</b> &rarr; not feasible &middot; evaluation stops</div>
+        </div>
+
+        <div class="abs-card">
+          <div class="abs-card-title">Why 170 techniques admit no decoy</div>
+          <p class="why"><b>The behavior runs on attacker-owned ground.</b> Preparation, command channels, and data-out routes never touch an asset the defender can fabricate.<span class="why-tag" id="whyTag1"></span></p>
+          <p class="why"><b>The attacker acts only on what they already hold.</b> Obfuscating code, editing timestamps, disabling tools on a compromised host: no reach outward, no contact point.<span class="why-tag">Most of Def-Eva &middot; Persist &middot; Priv-Esc</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="abs-card abs-patterns">
+      <div class="abs-card-title">Every feasible technique follows one of two placement patterns</div>
+      <div class="pat-grid">
+        <div class="pat">
+          <h3>Sweep</h3>
+          <div class="pat-body">
+            <svg viewBox="0 0 220 96" class="pat-svg" role="img" aria-label="Attacker sweeps broadly and encounters the decoy among many assets">
+              <circle cx="16" cy="48" r="7" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.85">
+                <path d="M26 44 L74 20"/><path d="M26 48 L74 48"/><path d="M26 52 L74 76"/>
+              </g>
+              <g class="pat-cells">
+                <rect x="80" y="10" width="20" height="20" rx="2"/><rect x="106" y="10" width="20" height="20" rx="2"/><rect x="132" y="10" width="20" height="20" rx="2"/>
+                <rect x="80" y="38" width="20" height="20" rx="2"/><rect x="106" y="38" width="20" height="20" rx="2" class="pat-decoy"/><rect x="132" y="38" width="20" height="20" rx="2"/>
+                <rect x="80" y="66" width="20" height="20" rx="2"/><rect x="106" y="66" width="20" height="20" rx="2"/><rect x="132" y="66" width="20" height="20" rx="2"/>
+              </g>
+              <text x="158" y="52" class="pat-label">&mdash; decoy</text>
+            </svg>
+            <div class="pat-text">
+              <p>The attacker moves broadly through every asset in range and hits the decoy as part of that activity.</p>
+              <div class="pat-tags">Scanning &middot; Credential spraying &middot; File collection &middot; Ransomware &middot; Wipers</div>
+            </div>
+          </div>
+        </div>
+        <div class="pat">
+          <h3>Seek</h3>
+          <div class="pat-body">
+            <svg viewBox="0 0 220 96" class="pat-svg" role="img" aria-label="Attacker seeks one specific asset and interacts with a fabricated version">
+              <circle cx="16" cy="48" r="7" fill="currentColor"/>
+              <path d="M26 50 L128 66" stroke="currentColor" stroke-width="1.2" fill="none" stroke-dasharray="3 3"/>
+              <g class="pat-cells pat-ghost">
+                <rect x="80" y="10" width="20" height="20" rx="2"/><rect x="106" y="10" width="20" height="20" rx="2"/>
+                <rect x="80" y="56" width="20" height="20" rx="2"/>
+              </g>
+              <rect x="106" y="56" width="20" height="20" rx="2" class="pat-decoy pat-sought"/>
+              <text x="132" y="70" class="pat-label">&mdash; decoy</text>
+            </svg>
+            <div class="pat-text">
+              <p>The attacker hunts a specific kind of asset and interacts with a fabricated version of it.</p>
+              <div class="pat-tags">Credentials &middot; Services &middot; Shares &middot; Hosts &middot; Mailboxes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pat-rule"><span>Placement rule</span><p>A decoy must sit on a <b>Sweep</b> path or imitate a <b>sought</b> asset. Outside both, it goes untouched, however convincing it is.</p></div>
+    </div>
+
+    <div class="abs-foot">
+      <div>
+        <div class="abs-card-title">For defenders</div>
+        <ul class="take">
+          <li><b>Map first, deploy second.</b> Check that the target technique admits a decoy before spending on one.</li>
+          <li><b>Choose your trade.</b> Busy placements give coverage with noisy alarms; forbidden placements give few hits you can trust.</li>
+          <li><b>Judge decoys by their signal.</b> Interaction likelihood and malice fidelity matter more than decoy count.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="abs-card-title">Open release</div>
+        <p class="abs-note">Codebook, decision rules, and per-technique assessments for all 250 techniques, released as an auditable baseline. An eight-rater expert study assesses codebook usability and rating consistency.</p>
+        <div class="abs-links">
+          <a href="https://stratosphereips.github.io/cyber-deception-attack-surface" target="_blank" rel="noopener">stratosphereips.github.io/cyber-deception-attack-surface</a>
+          <a href="https://doi.org/10.5281/zenodo.22029527" target="_blank" rel="noopener">DOI 10.5281/zenodo.22029527</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
 
@@ -1014,6 +1272,79 @@ function setDecoy(val) {
   currentDecoy = val;
   document.getElementById("decoySelect").classList.toggle("active", val !== "all");
   applyFilter();
+}
+
+// ---- Visual abstract ----
+// Every figure here is derived from MATRIX_DATA, so a rescore updates the
+// poster automatically instead of leaving hardcoded numbers behind.
+// TACTIC_ABBR is already defined above for the matrix view; reused here.
+
+function buildAbstract() {
+  const order = [];
+  const by = new Map();
+  for (const t of MATRIX_DATA) {
+    if (!by.has(t.tac)) { by.set(t.tac, []); order.push(t.tac); }
+    by.get(t.tac).push(t);
+  }
+
+  let totH = 0, totM = 0, totN = 0;
+  const zeroTacs = [];
+  const waffle = document.getElementById("waffle");
+
+  for (const tac of order) {
+    const items = by.get(tac);
+    const H = items.filter(t => t.u === "High").length;
+    const M = items.filter(t => t.u === "Medium").length;
+    const feasible = H + M;
+    totH += H; totM += M; totN += items.length;
+    if (feasible === 0) zeroTacs.push({ tac, n: items.length });
+
+    // Grid is top-aligned, so lead with the coloured squares: High -> Medium ->
+    // not feasible, reading downward. 13 of 14 tactics have a count that is not
+    // a multiple of 4, so pad the END with invisible cells to keep every column
+    // on whole rows.
+    const pad = (4 - (items.length % 4)) % 4;
+    const cells = [
+      ...Array(H).fill("h"),
+      ...Array(M).fill("m"),
+      ...Array(items.length - feasible).fill("l"),
+      ...Array(pad).fill("pad"),
+    ].map(c => `<div class="wf-c ${c}"></div>`).join("");
+
+    const col = document.createElement("div");
+    col.className = "wf-col";
+    col.innerHTML = `<div class="wf-head">${TACTIC_ABBR[tac] || tac}</div>
+      <div class="wf-cells">${cells}</div>
+      <div class="wf-ratio${feasible === 0 ? " zero" : ""}">${feasible}/${items.length}</div>`;
+    col.title = `${tac}: ${feasible} of ${items.length} admit a decoy`;
+    waffle.appendChild(col);
+  }
+
+  const feasTot = totH + totM;
+  const pct = Math.round((feasTot / totN) * 100);
+  document.getElementById("absHeadline").innerHTML =
+    `${feasTot}/${totN} techniques admit a decoy &middot; <b style="color:var(--accent)">${pct}%</b>`;
+
+  // Name the empty tactics from the data rather than hardcoding the trio
+  if (zeroTacs.length) {
+    const names = zeroTacs.map(z => (TACTIC_ABBR[z.tac] || z.tac).toUpperCase()).join(", ");
+    const sum = zeroTacs.reduce((a, z) => a + z.n, 0);
+    document.getElementById("absZero").textContent = `${names}: 0 of ${sum} feasible`;
+    document.getElementById("whyTag1").textContent =
+      `${names} \u00b7 ${sum} techniques, 0 feasible`;
+  }
+}
+
+function setView(v) {
+  const isAbs = v === "abstract";
+  document.body.classList.toggle("view-abstract", isAbs);
+  document.getElementById("tabMatrix").classList.toggle("active", !isAbs);
+  document.getElementById("tabAbstract").classList.toggle("active", isAbs);
+  document.getElementById("tabMatrix").setAttribute("aria-selected", String(!isAbs));
+  document.getElementById("tabAbstract").setAttribute("aria-selected", String(isAbs));
+  if (isAbs) closePanel();
+  if (history.replaceState) history.replaceState(null, "", isAbs ? "#abstract" : "#matrix");
+  window.scrollTo(0, 0);
 }
 
 const MOBILE_Q = window.matchMedia("(max-width: 720px)");
@@ -1258,6 +1589,8 @@ function toggleTheme() {
 
 buildGrid();
 buildDecoyFilter();
+buildAbstract();
+if (location.hash === "#abstract") setView("abstract");
 
 // Phones open to a 14-item index of tactic headers rather than a 250-cell scroll.
 function syncCollapse() {
